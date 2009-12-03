@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>MooTools Konami Code</title>
+    <script src="resources/mootools-1.2.4-core-nc.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../mootools-konami.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8" id="example">
+      var chars;
+      window.addEvent('konami', function(){
+        var h1 = document.getElement('h1');
+        if (!chars) {
+          chars = new Elements();
+          var text = h1.get('text');
+          for (var i = 0; i < text.length; i++) {
+            chars.push(new Element('span', {
+              'text': text[i],
+              'morph': {'duration': 100+(50*(i+1)), 'link': 'chain'}
+            }));
+          }
+          h1.empty().adopt(chars);
+        }
+        chars.morph({
+          'left': 20, 'top': 10, 'color': '#FA00F1'
+        }).morph({
+          'left': 0, 'top': 0, 'color': '#000'
+        });
+      });
+    </script>
+    <script type="text/javascript" charset="utf-8">
+      window.addEvent('domready', function(){
+        // inject example javascript to pre
+        var exampleCode = document.id('example').get('text');
+        document.getElement('pre').set('text', exampleCode);
+        /* highlight keypresses (reimplements konamicode listener since
+                                 step and code is private) */
+        var step = 0, code = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+        var keys = document.getElements('ul.keys li');
+        window.addEvents({
+          keydown: function(event){
+            step = (event.code == code[step]) ? step + 1 : 0;
+            if (step > 0) {
+              var li = document.getElement('ul.keys li:nth-child('+step+')');
+              li.addClass('active').addClass('enabled');
+            } else {
+              keys.removeClass('enabled');
+            }
+          },
+          keyup: function(){
+            console.log('keyup', step);
+            if (step > 0) keys.removeClass('active');
+            if (step == code.length) {
+              step = 0;
+              keys.removeClass('enabled');
+            }
+          }
+        });
+      });
+    </script>
+    <style type="text/css" media="screen">
+      body { font-family: Helvetica; margin: 1em 2em;}
+      ul.keys { list-style: none; height: 2em;}
+      h1 span { position: relative; top: 0; left: 0; }
+      ul.keys li {
+        display: block;
+        float: left;
+        width: 1.5em; height: 1.5em;
+        text-align: center;
+        line-height: 1.5em;
+        background: #676767;
+        border: 0.2em outset #898989;
+        color: #F0F0F0;
+        margin: 0 0.2em;
+      }
+      ul.keys li.enabled {
+        background-color: #8C2775; border-color: #B0188F;
+      }
+      ul.keys li.active {
+        border-style: inset; padding-top: 0.1em; height: 1.4em;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>MooTools Konami Code</h1>
+    <p>Konami Code:</p>
+    <ul class="keys">
+      <li>&uarr;</li><li>&uarr;</li><li>&darr;</li><li>&darr;</li>
+      <li>&larr;</li><li>&rarr;</li><li>&larr;</li><li>&rarr;</li>
+      <li>B</li><li>A</li>
+    </ul>
+    <p>Example:</p>
+    <pre></pre>
+  </body>
+</html>
